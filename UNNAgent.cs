@@ -15,6 +15,9 @@ public class UNNAgent : Agent
     private  float delay_counter;
 
     public bool log;
+
+    // should train/test delay aware
+    public bool delayAware;
     
     private Manager manager;
     private TestHandler test_handler;
@@ -33,6 +36,7 @@ public class UNNAgent : Agent
 
     public override void Initialize()
     {
+        // Initialize test handler, manager and buffer
         manager = GetComponent<Manager>();
         manager.init();
         test_handler = GetComponent<TestHandler>();
@@ -73,19 +77,25 @@ public class UNNAgent : Agent
     {
         // collect observations
         float[] obs = manager.getObs();
-        sensor.AddObservation(obs[3]);
-        sensor.AddObservation(delay);
+        sensor.AddObservation(obs[3]); 
+        if(delayAware) sensor.AddObservation(delay);
         // add obs to the buffer
         if(delay > 0) bufferObservations.Enqueue(obs);
         // if buffer is full, get delayed obs
-        if(bufferObservations.Count >= delay_counter ){
+        if(bufferObservations.Count >= delay_counter && delayAware){
             var delayedObs = bufferObservations.Peek();
             bufferObservations.Dequeue();
             sensor.AddObservation(delayedObs[0]);
             sensor.AddObservation(delayedObs[1]);
-            sensor.AddObservation(delayedObs[2]); 
+            sensor.AddObservation(delayedObs[2]);
             if(test_handler.test) test_handler.logObs(obs,delayedObs);
-        } 
+        }
+        else if(!delayAware) {
+            sensor.AddObservation(obs[0]);
+            sensor.AddObservation(obs[1]);
+            sensor.AddObservation(obs[2]);
+            if(test_handler.test) test_handler.logObs(obs,obs);
+        }
     }
 
 
@@ -93,7 +103,7 @@ public class UNNAgent : Agent
     public override void OnActionReceived(float[] vectorAction)
     {
         // get the action return by the neural network, clip it and scale it
-        float consigne = Mathf.Clamp(vectorAction[0], -1f, 1f)*0.6f;
+        float consigne =  Mathf.Clamp(vectorAction[0], -1f, 1f) *(manager.robot_model == 2 ? 0.5f:0.6f);
         manager.setInstruction(consigne);
 
         if(manager.end_episode()){

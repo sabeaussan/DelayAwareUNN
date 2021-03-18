@@ -7,28 +7,38 @@ using System.IO;
 
 public class VanillaAgent : Agent
 {
-    //TODO : rajouter le paramètre de range de l'effecteur + recevoir refPos de initialize 
+    // kind of robot to use
     public  int robot_model;
+
+    // Delay observed by the model
     private float delay;
+    // Delay in timestep
     private float delay_counter;
+    // should log the run
     public bool log;
+    // should train/test delay aware
+    public bool delayAware;
     
     private VanillaManager manager;
     private TestHandler test_handler;   
 
     
     private Queue<float[]> bufferObservations;
+
+    // frequency at which the delay is changed
     private static int delayChangeFreq = 15;
     private  int nbStepDelayChange;
     private static float STEP;
     private float episode_reward;
     private float rew;
 
+    // ref joints position
     private float[] REF_POSITION_JOINTS;
 
 
     public override void Initialize()
     {
+        // Initialize test handler, manager and buffer and REF_POSITION_JOINTS
         manager = GetComponent<VanillaManager>();
         test_handler = GetComponent<TestHandler>();
         if(robot_model == 1) REF_POSITION_JOINTS = new float[]{35,59,-90};
@@ -45,17 +55,21 @@ public class VanillaAgent : Agent
 
     public override void OnEpisodeBegin()
     {   
+        // Initialize the position of the ball at the begining of the episode
         manager.initBallPosition();
         if(!test_handler.test){
             if(nbStepDelayChange%delayChangeFreq==0){
+                // Sample a new delay from a Uniform distribution
                 delay = Random.Range(0.1f, 1f);;
                 delay_counter = delay/STEP;
+                // clear buffer with delayed obs at the begining of each episode
                 bufferObservations.Clear();
             }   
             nbStepDelayChange++;
             test_handler.incNbEpisode(episode_reward);
         }
         else{
+            // fixed delay for tests
             delay = 0.3f;
             delay_counter = delay/STEP;
         } 
@@ -64,18 +78,27 @@ public class VanillaAgent : Agent
   
     public override void CollectObservations(VectorSensor sensor)
     {
+        // collect observations
         float[] obs = manager.getObs();
         sensor.AddObservation(obs[3]); 
-        //sensor.AddObservation(delay);
+        if(delayAware) sensor.AddObservation(delay);
+        // add obs to the buffer
         if(delay > 0) bufferObservations.Enqueue(obs);
-        //if(bufferObservations.Count >= delay_counter ){
-            //var delayedObs = bufferObservations.Peek();
+        // if buffer is full, get delayed obs
+        if(bufferObservations.Count >= delay_counter && delayAware){
+            var delayedObs = bufferObservations.Peek();
             bufferObservations.Dequeue();
+            sensor.AddObservation(delayedObs[0]);
+            sensor.AddObservation(delayedObs[1]);
+            sensor.AddObservation(delayedObs[2]);
+            if(test_handler.test) test_handler.logObs(obs,delayedObs);
+        }
+        else {
             sensor.AddObservation(obs[0]);
             sensor.AddObservation(obs[1]);
             sensor.AddObservation(obs[2]);
             if(test_handler.test) test_handler.logObs(obs,obs);
-        //}
+        }
     }
 
 
@@ -84,6 +107,8 @@ public class VanillaAgent : Agent
     {
         float[] consigne = new float[4];
         consigne[0] = 0;
+        // get the actions return by the neural network, clip it and scale it
+        // the actions correspond to offsets relatively to joint position
         if(robot_model == 1){
             consigne[1] = Mathf.Clamp(vectorAction[0], -1f, 1f)*10f+REF_POSITION_JOINTS[0];
             consigne[2] = Mathf.Clamp(vectorAction[1], -1f, 1f)*30f+REF_POSITION_JOINTS[1];
@@ -99,6 +124,7 @@ public class VanillaAgent : Agent
             EndEpisode();
         }
         else{
+            // compute reward for the step
             rew = manager.computeReward();
             episode_reward+=rew;
         }

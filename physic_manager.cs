@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class physic_manager : MonoBehaviour
 {
-
+    // script that manage physic such as gravity
+    
     private Rigidbody ball;
     public float speed;
 
@@ -25,15 +26,8 @@ public class physic_manager : MonoBehaviour
  	{
         Vector3 force = new Vector3(0f, -9.5f, 0f);
         ball.AddForce(force,ForceMode.Force);
-        /*if(!ball.IsSleeping()){
-            Vector3 force = new Vector3(5f, 0f, 0f);
-            ball.AddRelativeForce(force,ForceMode.Impulse);
-        }*/
 
  	}
 
- 	/*void OnCollisionExit(Collision collisionInfo)
-    {
-        Physics.gravity = new Vector3 (0,-9.81f,0);
-    }*/
+
 }

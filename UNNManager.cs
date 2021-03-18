@@ -4,26 +4,35 @@ using UnityEngine;
 
 public class UNNManager : MonoBehaviour
 {
-    
+    // kind of robot to use
     public int robot_model;
+    private const int BAM = 0;
+    private const int Braccio = 1;
+    private const int DoF2 = 2;
+
+    // ball on the gutter
     public GameObject ball;
+    // desired position change frequency
     public float change_freq;
+    // Desired effector position
     public GameObject target;
+    // move speed for the BAM effector
     public float moveSpeed;
-    
+    // desired position on the gutter
     public GameObject target_pos;
+
 
     private static float gutterLength;
     private static float leverLength;
     private static float refPositionEffector;
 
-    private const int BAM = 0;
-    private const int Braccio = 1;
-    private const int DoF2 = 2;
+    // should do long (0) or short test (1)
+    public int longTest;
 
     private Transform effector;
     private Transform gutter;
 
+    //positive reward range
     private static float positive_range = 0.4f;
     private Rigidbody rb;
     
@@ -37,11 +46,18 @@ public class UNNManager : MonoBehaviour
 
     private int i;
 
+    // TODO : 
+    // pareil pour delay aware ou pas
+    // penser a mod range 2DoF
 
     public float[] getObs(){ 
+        // collect observations, normalize and return a observation array
+        // change the desired position every change_freq steps
+        // For a test, the desired ball posiion is contain in an array
+        // else it is randomly sampled
         if(nb_step_change%change_freq==0){
             if(test_handler.test) {
-                desired_ball_position = test_handler.test_video[i];
+                desired_ball_position = test_handler.test_video[i%3] * longTest + test_handler.vector_test_desired_pos[i] * (1 - longTest); 
                 i++;
             }
             else  desired_ball_position = Random.Range(0.15f, 0.85f);
@@ -57,6 +73,7 @@ public class UNNManager : MonoBehaviour
     }
 
     public void init(){ 
+        // initialize the manager 
         test_handler = GetComponent<TestHandler>();
         float[] init_angles;
         if (robot_model != BAM){
@@ -74,19 +91,22 @@ public class UNNManager : MonoBehaviour
     } 
 
     public void moveGutter(){
+        // move and rotate the gutter according to the effector height
         float h = effector.position.y - refPositionEffector;
         float alpha = (180f * Mathf.Asin(h/leverLength))/Mathf.PI;
         gutter.transform.rotation = Quaternion.Euler(0f, 0f,-alpha);
 
     }
 
-    // penser a mod range 2DoF
+    
 
     public void setInstruction(float instruction){
+        // get command from the UNNAgent and execute it on the chosen robot
+        // update gutter state afterwards
         if(robot_model!= BAM){
             float instruction_pos = instruction + refPositionEffector;
             target.transform.position = new Vector3(target.transform.position.x,instruction_pos,target.transform.position.z);
-            if(robot_model == Braccio) robot_controller.GeometricMethod(target.transform.position);
+            if(robot_model == Braccio) robot_controller.InverseKinematic3D(target.transform.position);
             else robot_controller.InverseKinematic2D(target.transform.position.y);
         }
         else {
@@ -97,6 +117,7 @@ public class UNNManager : MonoBehaviour
     }
 
     public void initBallPosition(){
+        // initialize ball position with a random uniform (training) or predefined (test)
         float max_height = Mathf.Max(1.5f,effector.position.y);
         float ball_abscisse;
         if(test_handler.test) ball_abscisse = 0.25f*gutterLength;
@@ -106,6 +127,9 @@ public class UNNManager : MonoBehaviour
 
 
     public float computeReward(){
+        // compute the agent reward for the timestep
+        // reward is the weighted distance between desired ball position and current ball position 
+        // a small positive reward if the ball is in the positive reward range
         float reward = 0f;
         float distance = Vector3.Distance(ball.transform.localPosition,new Vector3(desired_ball_position*gutterLength,0f,0f));
         if(distance <= positive_range){
@@ -116,9 +140,14 @@ public class UNNManager : MonoBehaviour
     }
 
 
-    public bool end_episode(){
-        return false;//ball.transform.position.y < Mathf.Min(effector1.transform.position.y,effector2.transform.position.y) - 0.1f;
-    }
+        public bool end_episode(){
+        if(ball.transform.position.y < 0f){
+            rb.velocity = new Vector3(0f,0f,0f);
+            //Debug.Log("BALL DROPPED !!!");
+            return true;
+        }
+        return false;
+        }
 }
 
 
