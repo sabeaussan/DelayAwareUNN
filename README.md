@@ -3,12 +3,7 @@
 
 This repo is accompanying our paper "Delay Aware Universal Notice Network : real world multi-robot transfer".
 
-<p align="center">
-  <img src="/Ressources/transfer.png" width=70% />
-</p>
-<p align="center">
-  
-</p>
+![Alt text](/Ressources/transfer.png?raw=true)
 
 ## Requirements :
 	- Python 3.7
