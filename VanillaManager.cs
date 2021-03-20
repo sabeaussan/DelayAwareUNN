@@ -4,20 +4,14 @@ using UnityEngine;
 
 public class VanillaManager : MonoBehaviour
 {
-    // kind of robot to use
+
     private int robot_model;
+    public GameObject ball;
+    public float change_freq;
+    public GameObject target_pos;
     private const int Braccio = 1;
     private const int DoF2 = 2;
 
-    // ball on the gutter
-    public GameObject ball;
-    // desired position change frequency
-    public float change_freq;
-    // desired position on the gutter
-    public GameObject target_pos;
-
-    // should do long (0) or short test (1)
-    public int longTest;
 
     private static float gutterLength;
     private static float leverLength;
@@ -25,7 +19,9 @@ public class VanillaManager : MonoBehaviour
     private Transform effector;
     private Transform gutter;
 
-    //positive reward range
+    // should do long or short test
+    public int longTest;
+
     private static float positive_range = 0.4f;
     private Rigidbody rb;
     
@@ -41,7 +37,6 @@ public class VanillaManager : MonoBehaviour
 
 
     public void init(int p_robot_model,float[] init_angles){
-        // initialize the manager
         test_handler = GetComponent<TestHandler>();
         robot_model = p_robot_model;
         rb = ball.GetComponent<Rigidbody>();
@@ -55,20 +50,14 @@ public class VanillaManager : MonoBehaviour
     } 
 
     public void setInstruction(float[] actions){
-        // get command from the VanillaAgent and execute it on the robot
-        // update gutter state afterwards
         robot_controller.SetAngles(actions);
         moveGutter();
     }
 
     public float[] getObs(){ 
-        // collect observations, normalize and return a observation array
-        // change the desired position every change_freq steps
-        // For a test, the desired ball posiion is contain in an array
-        // else it is randomly sampled
         if(nb_step_change%change_freq==0){
             if(test_handler.test) {
-                desired_ball_position = test_handler.test_video[i] * longTest + test_handler.vector_test_desired_pos[i] * (1 - longTest);
+                desired_ball_position = test_handler.test_video[i%3] * longTest + test_handler.vector_test_desired_pos[i] * (1 - longTest);
                 i++;
             }
             else  desired_ball_position = Random.Range(0.15f, 0.85f); 
@@ -80,11 +69,12 @@ public class VanillaManager : MonoBehaviour
         obs[1] = rb.velocity.x/6f;
         obs[2] = (robot_controller.effector.position.y-refPositionEffector)/2; // pas sur que ce soit bien normalizé
         obs[3] = desired_ball_position;
+        Debug.Log("des position : "+obs[3]);
+        Debug.Log("position balle : "+obs[0]);
         return obs;
     }
 
     public void moveGutter(){
-        // move and rotate the gutter according to the effector height
         float h = effector.position.y - refPositionEffector;
         float alpha = (180f * Mathf.Asin(h/leverLength))/Mathf.PI;
         gutter.transform.rotation = Quaternion.Euler(0f, 0f,-alpha);
@@ -92,7 +82,6 @@ public class VanillaManager : MonoBehaviour
     }
 
     public void initBallPosition(){
-        // initialize ball position with a random uniform (training) or predefined (test)
         float max_height = Mathf.Max(1.5f,effector.position.y);
         float ball_abscisse;
         if(test_handler.test) ball_abscisse = 0.25f*gutterLength;
@@ -111,9 +100,6 @@ public class VanillaManager : MonoBehaviour
     }
 
     public float computeReward(){
-        // compute the agent reward for the timestep
-        // reward is the weighted distance between desired ball position and current ball position 
-        // a small positive reward if the ball is in the positive reward range
         float reward = 0f;
         float distance = Vector3.Distance(ball.transform.localPosition, new Vector3(desired_ball_position*gutterLength,0f,0f));
         if(distance <= positive_range){

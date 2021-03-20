@@ -20,14 +20,15 @@ public class UNNManager : MonoBehaviour
     public float moveSpeed;
     // desired position on the gutter
     public GameObject target_pos;
+    // should do long (0) or short test (1)
+    public int longTest;
 
 
     private static float gutterLength;
     private static float leverLength;
     private static float refPositionEffector;
 
-    // should do long (0) or short test (1)
-    public int longTest;
+
 
     private Transform effector;
     private Transform gutter;
@@ -46,9 +47,6 @@ public class UNNManager : MonoBehaviour
 
     private int i;
 
-    // TODO : 
-    // pareil pour delay aware ou pas
-    // penser a mod range 2DoF
 
     public float[] getObs(){ 
         // collect observations, normalize and return a observation array
@@ -77,8 +75,8 @@ public class UNNManager : MonoBehaviour
         test_handler = GetComponent<TestHandler>();
         float[] init_angles;
         if (robot_model != BAM){
-            if(robot_model == Braccio) init_angles = new float[]{0f,-35,-59,90};
-            else init_angles = new float[]{0f,60f,-60f};
+            if(robot_model == Braccio) init_angles = new float[]{35,59,-90};
+            else init_angles = new float[]{60f,-60f};
             robot = robot_controller.InitializeRobot(init_angles); 
         } 
         if(robot_model == BAM) effector = this.gameObject.transform.GetChild(1); 
@@ -141,7 +139,7 @@ public class UNNManager : MonoBehaviour
 
 
         public bool end_episode(){
-        if(ball.transform.position.y < 0f){
+        if(ball.transform.position.y < 0.3f){
             rb.velocity = new Vector3(0f,0f,0f);
             //Debug.Log("BALL DROPPED !!!");
             return true;
