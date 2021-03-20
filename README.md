@@ -4,7 +4,7 @@
 This repo is accompanying our paper "Delay Aware Universal Notice Network : real world multi-robot transfer".
 
 <p align="center">
-  <img src="/Resources/transfer.png" width=70% />
+  <img src="/Ressources/transfer.png" width=70% />
 </p>
 <p align="center">
   
