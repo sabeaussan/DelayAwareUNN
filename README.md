@@ -108,4 +108,53 @@ UNN module on the Braccio robot
 UNN module on the 2DoF robot
 </p>
 
+## ROS Experiments
 
+### Requirements : 
+	- Python 2.7
+	- ROS Kinetic
+	- TensorFlow 1.15.2 or higer
+	- OpenCv
+
+
+Once the models are fully trained on the simulated environments, the tensorflow model will be located inside model/run-id/My Behavior/frozen_graph_def.pb
+
+To launch the ROS master run 
+```bash
+roscore
+```
+
+To try the models on the real robots, first launch the camera.py script which will track the required poses a
+```bash
+python camera.py
+```
+Pls note that the script expect the ball to be green and a yellow circle at one of the end of the gutter to get the ball position and velocity.
+
+To run the UNN based models :
+```bash
+python unn.py -p ARG_PATH -m ARG_METHOD -r ARG_ROBOT -t ARG_TEST
+```
+
+or the Vanilla models run : 
+```bash
+python vanilla.py -p ARG_PATH -m ARG_METHOD -r ARG_ROBOT -t ARG_TEST
+```
+
+where 	ARG_PATH is the path to the tensorflow model
+		ARG_METHOD is an integer indicating wether the model is delay aware (0) or not (1)
+		ARG_ROBOT is an integer specifying the type of robot to use : braccio(0) or 2DoF(1)
+		ARG_TEST is an integer specifying the type of test to run : short test (0) or long test (1). A short test is composed of 3 desired ball position whereas a long test is composed of 50.
+
+<p align="center">
+  <img src="/Ressources/Braccio_P.gif" width=70% />
+</p>
+<p align="center">
+UNN module on the Braccio robot
+</p>
+
+<p align="center">
+  <img src="/Ressources/2DoF_P.gif" width=70% />
+</p>
+<p align="center">
+UNN module on the 2DoF robot
+</p>
