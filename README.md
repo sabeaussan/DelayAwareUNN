@@ -34,6 +34,12 @@ python downloadEnv.py
 ```
 at the root of the cloned github repo. It will create a directory called env.
 
+All the bash commands below need to be lauch from the root of the Unity directory
+
+```bash
+cd Unity/
+```
+
 ### UNN Training : 
 
 To train the delay aware UNN module on the BAM robot run
@@ -101,3 +107,5 @@ UNN module on the Braccio robot
 <p align="center">
 UNN module on the 2DoF robot
 </p>
+
+
