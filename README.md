@@ -20,9 +20,9 @@ This repo is accompanying our paper "Delay Aware Universal Notice Network : real
 	- ml-agents-envs 0.15.0
 	- TensorFlow 1.15.2 or higer
 
-Install the python ml-agents package with
+Install the python ml-agents package (this will also install TensorFlow and ml-agents-envs) with
 ```bash
-python -m pip install mlagents==0.15.1 (this will also install TensorFlow and ml-agents-envs)
+python -m pip install mlagents==0.15.1 
 ```
 in your favorite virtual environment.
 
@@ -52,6 +52,8 @@ To test the delay aware UNN module after training on the other simulated robots 
 ```bash
 mlagents-learn config/config_gutter.yaml --run-id=BAMDelayAware --load  --env=env/ARG_ROBOT --width=756 --height=756 --time-scale 10  --env-args --delay ARG_DELAY --aware 0 
 ```
+
+To test the delay unaware UNN module after training on the other simulated robots run 
 
 ```bash
 mlagents-learn config/config_gutter.yaml --run-id=BAMDelayUnaware --load  --env=env/ARG_ROBOT --width=756 --height=756 --time-scale 10  --env-args --delay ARG_DELAY --aware 1
