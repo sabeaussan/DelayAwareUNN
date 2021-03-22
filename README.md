@@ -10,15 +10,15 @@ This repo is accompanying our paper "Delay Aware Universal Notice Network : real
   
 </p>
 
-## Requirements :
+
+
+## Unity Experiments
+
+### Requirements :
 	- Python 3.7
 	- ml-agents 0.15.1 
 	- ml-agents-envs 0.15.0
 	- TensorFlow 1.15.2
-
-
-
-## Unity Experiments
 
 ### UNN Training : 
 
@@ -64,3 +64,24 @@ mlagents-learn config/config_gutter.yaml --run-id=(ARG_ROBOT)DelayUnaware --trai
 
 with 	ARG_ROBOT = VanillaBraccio for the braccio robot or
 		ARG_ROBOT = Vanilla2DoF for the 2 DoF robot
+
+<p align="center">
+  <img src="/Ressources/BAM.gif" width=70% />
+</p>
+<p align="center">
+UNN module on the BAM robot
+</p>
+
+<p align="center">
+  <img src="/Ressources/Braccio.gif" width=70% />
+</p>
+<p align="center">
+UNN module on the Braccio robot
+</p>
+
+<p align="center">
+  <img src="/Ressources/2DoF.gif" width=70% />
+</p>
+<p align="center">
+UNN module on the 2DoF robot
+</p>
