@@ -20,13 +20,23 @@ This repo is accompanying our paper "Delay Aware Universal Notice Network : real
 	- ml-agents-envs 0.15.0
 	- TensorFlow 1.15.2 or higer
 
-Install the python ml-agents package (this will also install TensorFlow and ml-agents-envs) with
+Install the python ml-agents package (this will also install TensorFlow and ml-agents-envs) and gdown with
 ```bash
 python -m pip install mlagents==0.15.1 
 ```
+
+```bash
+pip install gdown 
+```
+
 in your favorite virtual environment.
 
 Clone this repository or dowload the zip file and unzip it.
+
+All the bash commands below need to be lauch from the root of the Unity directory
+```bash
+cd Unity/
+```
 
 To download the required Unity environments, run 
 ```bash
@@ -34,13 +44,13 @@ python downloadEnv.py
 ```
 at the root of the cloned github repo. It will create a directory called env.
 
-All the bash commands below need to be lauch from the root of the Unity directory
-
-```bash
-cd Unity/
-```
 
 ### UNN Training : 
+
+For windows user, you must add /gutter_task to all env argument for the below commands, e.g
+```bash
+--env=env/BAM_training/gutter_task
+```
 
 To train the delay aware UNN module on the BAM robot run
 ```bash
@@ -123,6 +133,7 @@ To launch the ROS master run
 ```bash
 roscore
 ```
+All the bash commands below need to be lauch from the root of the ROS directory
 
 To try the models on the real robots, first launch the camera.py script which will track the required poses a
 ```bash
