@@ -66,13 +66,13 @@ mlagents-learn config/config_gutter.yaml --run-id=BAMDelayUnaware --train  --env
 
 To test the delay aware UNN module after training on the other simulated robots run 
 ```bash
-mlagents-learn config/config_gutter.yaml --run-id=BAMDelayAware --load  --env=env/ARG_ROBOT --width=756 --height=756 --time-scale 10  --env-args --delay ARG_DELAY --aware 0 
+mlagents-learn config/config_gutter.yaml --run-id=BAMDelayAware --load  --env=env/ARG_ROBOT --width=756 --height=756 --time-scale 1  --env-args --delay ARG_DELAY --aware 0 
 ```
 
 To test the delay unaware UNN module after training on the other simulated robots run 
 
 ```bash
-mlagents-learn config/config_gutter.yaml --run-id=BAMDelayUnaware --load  --env=env/ARG_ROBOT --width=756 --height=756 --time-scale 10  --env-args --delay ARG_DELAY --aware 1
+mlagents-learn config/config_gutter.yaml --run-id=BAMDelayUnaware --load  --env=env/ARG_ROBOT --width=756 --height=756 --time-scale 1  --env-args --delay ARG_DELAY --aware 1
 ```
 
 with 	ARG_ROBOT = BraccioUNN_transfer for the braccio robot or

@@ -15,11 +15,14 @@ def get_assets():
     
 def get_asset_name(plateform):
     if platform.system().lower() == "darwin" :
-        asset_name = "1qGKwRYUKigLc9mJvc5aH-OJNvBpOGNY0"
+        asset_name = "1P6l8fkVhz_Rk-bD1p-z7EtAaOShxQ30k"
     if platform.system().lower() == "linux" :
-        asset_name = "1vGnTL0fPJXSwM07_vodYgrxejzQDZ6iB"
+        asset_name = "1D5cRke0A1AQaZ-8G8PfUf13BlLrEgVzl"
     if platform.system().lower() == "windows" :
-        asset_name = "1WtzCnddrWWJwCyBl0d2t5FpkIHclz79k"
+        asset_name = "1U4sSO2iKldn32C4tZKYVZMeVwQP87nJ8"
     return asset_name
 
+
+
 get_assets()
+
