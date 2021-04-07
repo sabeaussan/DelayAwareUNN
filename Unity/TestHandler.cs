@@ -11,7 +11,7 @@ public class TestHandler : MonoBehaviour
     public bool train;
     private int nb_episode = -1;
     private StreamWriter sw;
-    private static string root_path = "/Users/admin/Documents/ml_dev/Pytorch/Unity/gutter_task/Assets/tests_article/";
+    private static string root_path = "./log_output/";
 
     [HideInInspector] public float[] vector_test_desired_pos = new float[]{0.665146f, 0.319444f, 0.210018f, 0.788669f, 0.625432f, 0.413984f, 
         0.492742f, 0.217814f, 0.592103f, 0.709749f, 0.573616f, 0.787164f, 0.263239f, 0.270857f, 0.546654f, 0.211952f, 0.586792f, 0.629471f, 
