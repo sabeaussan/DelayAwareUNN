@@ -42,12 +42,12 @@ To download the required Unity environments, run
 ```bash
 python downloadEnv.py
 ```
-at the root of the cloned github repo. It will create a directory called env. (If you are on Linux, you may need to add the execution right for the environments).
+at the root of the cloned github repo. It will create a directory called env. (If you are on Linux/OSX, you may need to add the execution right for the environments).
 
 ```bash
 mkdir log_output
 ```
-to create the directory where the log_output will be stored. It will not run without this directory.
+to create the directory where the log_output will be stored (on OSX create this directory inside the env directory). It will not run without this directory.
 
 ### UNN Training : 
 
